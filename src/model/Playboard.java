@@ -7,6 +7,7 @@ public class Playboard {
 
 	private int NUMBER_CELLS_BY_REGION;
 	private int NUMBER_REGIONS;
+	private int NUMBER_PREFIXED_VALUES;
 	private ArrayList<Region> regions;
 	
 	public Playboard() 
