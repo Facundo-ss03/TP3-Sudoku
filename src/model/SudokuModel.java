@@ -232,52 +232,8 @@ public class SudokuModel implements ISudokuModel {
         return prefijadas[fila][col];
     }
 	
-	// FUNCIONES PARA DETECTAR MÁS DE UNA SOLA SOLUCION:
-	//----------------------------------------------------
-	
-	public int contarSoluciones() {
-		int[][]copia = new int[9][9];
-		for (int i = 0; i < 9; i++) {
-			System.arraycopy(tablero[i], 0, copia[i], 0, 9);
-		}
-		
-		int[] contador = { 0 };
-		resolverContando(copia, contador);
-		
-		return contador[0];
-	}
-	
-	private void resolverContando(int[][] tablero, int[] contador) {
-		if (contador[0] > 1) return; // EXISTE MÁS DE UNA SOLUCIÓN, CORTAMOS PARA NO HACER BUCLES INFINITOS
-		if (limiteAlcanzado) return;
-		
-		for (int fila = 0; fila < 9; fila++) {
-	        for (int columna = 0; columna < 9; columna++) {
-	            if (tablero[fila][columna] == 0) {
-	                for (int num = 1; num <= 9; num++) {
-	                    if (esValidoEn(tablero, num, fila, columna)) {
-	                    	tablero[fila][columna] = num;
-	                        resolverContando(tablero, contador);
-	                        tablero[fila][columna] = 0;
-	                        
-	                        if (limiteAlcanzado) return;
-	                    }
-	                }
-	                return; // SI HAY UNA CELDA VACIA, SEGUIMOS PROBANDO
-	            }
-	        }
-		}
-	    // ENCONTRAMOS UNA SOLUCION COMPLETA
-	    contador[0]++;
-	    
-	    if (contador[0] > limite) {
-	    	limiteAlcanzado = true;
-	    	System.out.println("Límite de soluciones del programa alcanzado, pueden existir más soluciones.");
-	    }
-	}
-	
-	
 
+		
 	private boolean esValidoEn(int[][] tablero, int valor, int fila, int columna) {
 		for (int j = 0; j < 9; j++) {
 			if (tablero[fila][j] == valor) {
@@ -334,86 +290,8 @@ public class SudokuModel implements ISudokuModel {
 	        System.arraycopy(tablero[i], 0, copia[i], 0, 9);
 	    soluciones.add(copia);
 	}
-	// MUESTRA SOLO LAS SOLUCIONES COMPLETAS Y VÁLIDAS
-	public void mostrarTodasLasSolucionesValidas() {
-	    int[][] copia = new int[9][9];
-	    for (int i = 0; i < 9; i++) {
-	        System.arraycopy(tablero[i], 0, copia[i], 0, 9);
-	    }
 
-	    int[] contador = {0};
-	    System.out.println("Buscando soluciones que sean válidas\n");
-	    resolverMostrandoValidas(copia, contador);
-	    System.out.println("Total de soluciones válidas encontradas: " + contador[0]);
-	}
 
-	private void resolverMostrandoValidas(int[][] tablero, int[] contador) {
-	    for (int fila = 0; fila < 9; fila++) {
-	        for (int col = 0; col < 9; col++) {
-	            if (tablero[fila][col] == 0) {
-	                for (int num = 1; num <= 9; num++) {
-	                    if (esValidoEn(tablero, num, fila, col)) {
-	                    	tablero[fila][col] = num;
-	                        resolverMostrandoValidas(tablero, contador);
-	                        tablero[fila][col] = 0;
-	                    }
-	                }
-	                return; // VUELVE CUANDO NO HAY MÁS VALIDAS.
-	            }
-	        }
-	    }
 
-	    // SI PASA POR ACA ES PORQUE EN EL TABLERO NO HAY CEROS
-	    if (tableroValido(tablero)) {
-	        contador[0]++;
-	        System.out.println("Solución válida número " + contador[0] + ":");
-	        imprimirMatrizBonita(tablero);
-	        System.out.println("------------------------------------");
-	    }
-	}
 
-	private boolean tableroValido(int[][] tablero) {
-	    // VERIFICA QUE EL TABLERO CUMPLA CON LAS REGLAS DEL SUDOKU
-	    for (int fila = 0; fila < 9; fila++) {
-	        for (int columna = 0; columna < 9; columna++) {
-	            int valor = tablero[fila][columna];
-	            if (valor != 0) {
-	                tablero[fila][columna] = 0;
-	                if (!esValidoEn2(tablero, valor, fila, columna)) {
-	                    tablero[fila][columna] = valor;
-	                    return false;
-	                }
-	                tablero[fila][columna] = valor;
-	            }
-	        }
-	    }
-	    return true;
-	}
-
-	private boolean esValidoEn2(int[][] tablero, int numero, int fila, int columna) {
-	    for (int j = 0; j < 9; j++) if (tablero[fila][j] == numero) return false;
-	    for (int i = 0; i < 9; i++) if (tablero[i][columna] == numero) return false;
-
-	    int inicioFila = (fila / 3) * 3;
-	    int inicioColumna = (columna / 3) * 3;
-	    for (int i = inicioFila; i < inicioFila + 3; i++) {
-	        for (int j = inicioColumna; j < inicioColumna + 3; j++) {
-	            if (tablero[i][j] == numero) return false;
-	        }
-	    }
-	    return true;
-	}
-
-	private void imprimirMatrizBonita(int[][] tablero) {
-	    for (int fila = 0; fila < 9; fila++) {
-	        for (int columna = 0; columna < 9; columna++) {
-	            System.out.print(tablero[fila][columna] + " ");
-	            if ((columna + 1) % 3 == 0 && columna < 8) System.out.print("| ");
-	        }
-	        System.out.println();
-	        if ((fila + 1) % 3 == 0 && fila < 8) {
-	            System.out.println("------+-------+------");
-	        }
-	    }
-	}
 }
