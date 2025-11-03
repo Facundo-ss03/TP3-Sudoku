@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.List;
+
 import javax.swing.JOptionPane;
 
 import interfaces.ISudokuController;
@@ -19,35 +21,52 @@ public class SudokuController implements ISudokuController {
 	}
 	
 	// METODO PARA RESOLVER EL SUDOKU
+	
 	@Override
 	public void resolverSudoku() {
-		actualizarModelDesdeView();
-		
-		// SI NO ES UN TABLERO VALIDO, MUESTRA UN MENSAJE DE ERROR
-		if (!model.tableroValido()) {
-			JOptionPane.showMessageDialog(view, "El Sudoku ingresado tiene valores repetidos.\nRevisá filas, columnas o subcuadrículas.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-		}
-		// CUENTA LA CANTIDAD DE SOLUCIONES QUE TIENE EL SUDOKU
-		int soluciones = model.contarSoluciones();
-		if (soluciones == 0) {
-			JOptionPane.showMessageDialog(view, "El Sudoku no tiene solución.");
+	    actualizarModelDesdeView();
+
+	    // Verifica si el tablero es válido
+	    if (!model.tableroValido()) {
+	        JOptionPane.showMessageDialog(view,
+	            "El Sudoku ingresado tiene valores repetidos.\nRevisá filas, columnas o subcuadrículas.",
+	            "Error",
+	            JOptionPane.ERROR_MESSAGE
+	        );
 	        return;
-		} else if (soluciones > 1) {
-			JOptionPane.showMessageDialog(view, "El Sudoku tiene más de una solución posible.");
-			model.mostrarTodasLasSolucionesValidas();
+	    }
+
+	    // Obtenemos todas las soluciones válidas
+	    List<int[][]> soluciones = model.getTodasLasSolucionesValidas();
+
+	    if (soluciones.isEmpty()) {
+	        JOptionPane.showMessageDialog(view, "El Sudoku no tiene solución.");
 	        return;
-		}
-		// VARIABLE BOOLEANA PARA VER SI FUE RESUELTO
-		boolean resuelto = model.resolverBacktracking();
-		
-		// SI ENTRA ACÁ, EL SUDOU TIOENE SOLO UNA ÚNICA SOLUCIÓN.
-		if (resuelto) {
-			actualizarViewDesdeModel();
-			JOptionPane.showMessageDialog(view, "El sudoku resuelto solo tiene una única solución.");
-		}
+	    } else if (soluciones.size() > 1) {
+	        JOptionPane.showMessageDialog(view, "El Sudoku tiene más de una solución posible.");
+	        // Abrimos ventana con todas las soluciones
+	        int[][] primerSolucion = soluciones.get(0);
+		    for (int i = 0; i < 9; i++) {
+		        for (int j = 0; j < 9; j++) {
+		            model.setValor(primerSolucion[i][j], i, j, model.esPrefijada(i, j));
+		        }
+		    }	  
+		    actualizarViewDesdeModel();
+	        view.mostrarVentanaSoluciones(soluciones);
+	        return;
+	    }
+
+	    // Si solo hay una solución, aplicamos al model y actualizamos la vista
+	    int[][] primerSolucion = soluciones.get(0);
+	    for (int i = 0; i < 9; i++) {
+	        for (int j = 0; j < 9; j++) {
+	            model.setValor(primerSolucion[i][j], i, j, model.esPrefijada(i, j));
+	        }
+	    }
+	    actualizarViewDesdeModel();
+	    JOptionPane.showMessageDialog(view, "El sudoku resuelto solo tiene una única solución.");
 	}
-	
+
 	// GENERA UN SUDOKU ALEATORIO
 	@Override
 	public void generarSudokuAleatorio(int cantidadPrefijados) {

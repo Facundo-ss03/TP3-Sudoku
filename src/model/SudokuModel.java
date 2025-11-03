@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import interfaces.ISudokuModel;
@@ -10,7 +12,7 @@ public class SudokuModel implements ISudokuModel {
 	
 	private int limite = 10000;
 	private boolean limiteAlcanzado = false;
-
+	
 	// GETTER DEL TABLERO PARA LA VISTA
 	@Override
 	public int getValor(int fila, int columna) {
@@ -274,6 +276,8 @@ public class SudokuModel implements ISudokuModel {
 	    }
 	}
 	
+	
+
 	private boolean esValidoEn(int[][] tablero, int valor, int fila, int columna) {
 		for (int j = 0; j < 9; j++) {
 			if (tablero[fila][j] == valor) {
@@ -298,7 +302,38 @@ public class SudokuModel implements ISudokuModel {
 	
 	// MÉTODOS PARA VER CUANTAS SOLUCIONES HAY EN UN SUDOKU
 	//--------------------ELIMINARLAS----------------------
-	
+	public List<int[][]> getTodasLasSolucionesValidas() {
+	    List<int[][]> soluciones = new ArrayList<>();
+	    int[][] copia = new int[9][9];
+	    for (int i = 0; i < 9; i++) System.arraycopy(tablero[i], 0, copia[i], 0, 9);
+
+	    resolverGuardando(copia, soluciones);
+	    return soluciones;
+	}
+	private void resolverGuardando(int[][] tablero, List<int[][]> soluciones) {
+	    if (soluciones.size() >= limite) return; // cortamos si llegamos al límite
+
+	    for (int fila = 0; fila < 9; fila++) {
+	        for (int col = 0; col < 9; col++) {
+	            if (tablero[fila][col] == 0) {
+	                for (int num = 1; num <= 9; num++) {
+	                    if (esValidoEn(tablero, num, fila, col)) {
+	                        tablero[fila][col] = num;
+	                        resolverGuardando(tablero, soluciones);
+	                        tablero[fila][col] = 0;
+	                        if (soluciones.size() >= limite) return; // cortamos temprano
+	                    }
+	                }
+	                return;
+	            }
+	        }
+	    }
+	    // Si llegamos acá, tablero completo
+	    int[][] copia = new int[9][9];
+	    for (int i = 0; i < 9; i++)
+	        System.arraycopy(tablero[i], 0, copia[i], 0, 9);
+	    soluciones.add(copia);
+	}
 	// MUESTRA SOLO LAS SOLUCIONES COMPLETAS Y VÁLIDAS
 	public void mostrarTodasLasSolucionesValidas() {
 	    int[][] copia = new int[9][9];

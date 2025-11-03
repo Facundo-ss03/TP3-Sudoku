@@ -5,6 +5,7 @@ import interfaces.ISudokuView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class SudokuView extends JFrame implements ISudokuView {
 	private final CeldaView[][] celdas = new CeldaView[9][9];
@@ -104,6 +105,30 @@ public class SudokuView extends JFrame implements ISudokuView {
 		// BOTON LIMPIAR:
 		btnLimpiar.addActionListener(e -> controller.limpiarSudoku());
 	}
+	public void mostrarVentanaSoluciones(List<int[][]> soluciones) {
+	    JTextArea areaTexto = new JTextArea(20, 30);
+	    areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 14));
+	    areaTexto.setEditable(false);
+
+	    StringBuilder sb = new StringBuilder();
+	    for (int k = 0; k < soluciones.size(); k++) {
+	        sb.append("Solución ").append(k + 1).append(":\n");
+	        int[][] tablero = soluciones.get(k);
+	        for (int i = 0; i < 9; i++) {
+	            for (int j = 0; j < 9; j++) {
+	                sb.append(tablero[i][j]).append(" ");
+	                if ((j+1)%3==0 && j<8) sb.append("| ");
+	            }
+	            sb.append("\n");
+	            if ((i+1)%3==0 && i<8) sb.append("------+-------+------\n");
+	        }
+	        sb.append("\n");
+	    }
+
+	    areaTexto.setText(sb.toString());
+	    JOptionPane.showMessageDialog(this, new JScrollPane(areaTexto), "Soluciones del Sudoku", JOptionPane.INFORMATION_MESSAGE);
+	}
+
 
 	@Override
 	public int getValorEnCelda(int fila, int columna) {
