@@ -21,12 +21,11 @@ public class SudokuController implements ISudokuController {
 	}
 	
 	// METODO PARA RESOLVER EL SUDOKU
-	
 	@Override
 	public void resolverSudoku() {
 	    actualizarModelDesdeView();
 
-	    // Verifica si el tablero es válido
+	    // VERIFICA SI EL TABLERO ES VÁLIDO
 	    if (!model.tableroValido()) {
 	        JOptionPane.showMessageDialog(view,
 	            "El Sudoku ingresado tiene valores repetidos.\nRevisá filas, columnas o subcuadrículas.",
@@ -36,7 +35,7 @@ public class SudokuController implements ISudokuController {
 	        return;
 	    }
 
-	    // Obtenemos todas las soluciones válidas
+	    // OBTENEMOS TODAS LAS SOLUCIONES VÁLIDAS
 	    List<int[][]> soluciones = model.getTodasLasSolucionesValidas();
 
 	    if (soluciones.isEmpty()) {
@@ -44,7 +43,7 @@ public class SudokuController implements ISudokuController {
 	        return;
 	    } else if (soluciones.size() > 1) {
 	        JOptionPane.showMessageDialog(view, "El Sudoku tiene más de una solución posible.");
-	        // Abrimos ventana con todas las soluciones
+	        // ABRE VENTANA CON LAS SOLUCIONES POSIBLES
 	        int[][] primerSolucion = soluciones.get(0);
 		    for (int i = 0; i < 9; i++) {
 		        for (int j = 0; j < 9; j++) {
@@ -56,7 +55,7 @@ public class SudokuController implements ISudokuController {
 	        return;
 	    }
 
-	    // Si solo hay una solución, aplicamos al model y actualizamos la vista
+	    // SI SOLO TIENE UNA SOLA SOLUCIÓN, SE APLICA AL MODEL
 	    int[][] primerSolucion = soluciones.get(0);
 	    for (int i = 0; i < 9; i++) {
 	        for (int j = 0; j < 9; j++) {

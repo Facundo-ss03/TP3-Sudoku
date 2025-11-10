@@ -8,10 +8,13 @@ import java.awt.*;
 import java.util.List;
 
 public class SudokuView extends JFrame implements ISudokuView {
+	private static final Color DORADO_NEGRO = new Color(181, 148, 16);
+	private static final Color GRIS_OSCURO = new Color(20, 20, 20);
+	private static final Font FUENTE_MONO = new Font("Monospaced", Font.PLAIN, 14);
+	
 	private final CeldaView[][] celdas = new CeldaView[9][9];
 	private SudokuController controller;
 	private final JTextField campoPrefijado;
-	private Color grisOscuro = new Color(20, 20, 20);
 	
 	private final JButton btnResolver;
 	private final JButton btnGenerar;
@@ -19,34 +22,8 @@ public class SudokuView extends JFrame implements ISudokuView {
 	
 	public SudokuView() {
 		inicializarVentana();
-        
-        // PANEL PRINCIPAL
-        JPanel panelTablero = new JPanel(new GridLayout(9, 9));
-        panelTablero.setBorder(BorderFactory.createLineBorder(grisOscuro));
-        
-        // RECORRER LA MATRIZ PARA CREAR UNA CELDAVIEW
-        for (int fila = 0; fila < 9; fila++) {
-            for (int columna = 0; columna < 9; columna++) {
-            	// CREA LA CELDA VIEW
-                CeldaView celda = new CeldaView();
-
-                // BORDES GRUESOS PARA EL 3x3
-                if (fila % 3 == 0 && fila != 0) {
-                	// 3 1 1 1
-                    celda.setBorder(BorderFactory.createMatteBorder(3, 1, 1, 1, Color.BLACK));
-                }
-                if (columna % 3 == 0 && columna != 0) {
-                	// 1 3 1 1
-                    celda.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 1, Color.BLACK));
-                }
-                
-                // ASIGNA LA CELDA Y LA AGREGA AL TABLERO
-                celdas[fila][columna] = celda;
-                panelTablero.add(celda);
-            }
-        }
-        
-        // PANEL PARA BOTONES
+		
+		JPanel panelTablero = crearPanelTablero();
         JPanel panelBotones = new JPanel();
         
         // BOTONES
@@ -58,16 +35,9 @@ public class SudokuView extends JFrame implements ISudokuView {
         campoPrefijado = new JTextField("17", 3);
         
         // CONFIGURAR EL PANEL DE LOS BOTONES
-        panelBotones.add(new JLabel("Prefijados:"));
-        panelBotones.add(campoPrefijado);
-        panelBotones.add(btnGenerar);
-        panelBotones.add(btnResolver);
-        panelBotones.add(btnLimpiar);
         
         // CONFIGURAR ESTILO DE LOS BOTONES:
-        btnResolver.setForeground(new Color(181, 148, 16));
-        btnGenerar.setForeground(new Color(181, 148, 16));
-        btnLimpiar.setForeground(new Color(181, 148, 16));
+        configurarBotones(panelBotones);
 
         // ASIGNAR UBICACIONES DE LOS PANELES
         add(panelTablero, BorderLayout.CENTER);
@@ -82,6 +52,37 @@ public class SudokuView extends JFrame implements ISudokuView {
         setLayout(new BorderLayout());
 	}
 	
+	private JPanel crearPanelTablero() {
+		JPanel panel = new JPanel(new GridLayout(9, 9));
+		panel.setBorder(BorderFactory.createLineBorder(GRIS_OSCURO));
+		
+		for (int fila = 0; fila < 9; fila++) {
+			for (int columna = 0; columna < 9; columna++) {
+				CeldaView celda = new CeldaView();
+				
+				int arriba = (fila % 3 == 0 && fila != 0) ? 3 : 1;
+				int izquierda = (columna % 3 == 0 && columna != 0) ? 3 : 1;
+				celda.setBorder(BorderFactory.createMatteBorder(arriba, izquierda, 1, 1, Color.BLACK));
+				
+				celdas[fila][columna] = celda;
+				panel.add(celda);
+			}
+		}
+		return panel;
+	}
+	
+	private void configurarBotones(JPanel panel) {
+		panel.add(new JLabel("Prefijados:"));
+        panel.add(campoPrefijado);
+        panel.add(btnGenerar);
+        panel.add(btnResolver);
+        panel.add(btnLimpiar);
+		
+		btnResolver.setForeground(DORADO_NEGRO);
+        btnGenerar.setForeground(DORADO_NEGRO);
+        btnLimpiar.setForeground(DORADO_NEGRO);
+	}
+	
 	// SETTEAR EL CONTROLLER Y LOS LISTENERS DE LOS BOTONES
 	public void setController(SudokuController controller) {
 		this.controller = controller;
@@ -90,11 +91,14 @@ public class SudokuView extends JFrame implements ISudokuView {
 		btnResolver.addActionListener(e -> controller.resolverSudoku());
 		
 		// BOTON GENERAR:
-		// HAY QUE PONER UNA EXCEPCION DE QUE SI EL USUARIO PONE UN VALOR > 81, SALTE UN ERROR
 		btnGenerar.addActionListener(e -> {
 			try {
 				// TOMA EL NUMERO QUE ESTA DENTRO DEL CAMPO DE TEXTO "campoPrefijado"
 				int cantidad = Integer.parseInt(campoPrefijado.getText());
+				if (cantidad < 0 || cantidad > 81) {
+					mostrarMensaje("Ingrese un valor entre 0 y 81");
+					return;
+				}
 				// GENERA UN SUDOKU ALEATORIO CON ESE NÚMERO
 				controller.generarSudokuAleatorio(cantidad);
 			} catch (NumberFormatException excepcion) {
@@ -105,9 +109,11 @@ public class SudokuView extends JFrame implements ISudokuView {
 		// BOTON LIMPIAR:
 		btnLimpiar.addActionListener(e -> controller.limpiarSudoku());
 	}
+	
+	@Override
 	public void mostrarVentanaSoluciones(List<int[][]> soluciones) {
 	    JTextArea areaTexto = new JTextArea(20, 30);
-	    areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 14));
+	    areaTexto.setFont(FUENTE_MONO);
 	    areaTexto.setEditable(false);
 
 	    StringBuilder sb = new StringBuilder();
@@ -128,7 +134,6 @@ public class SudokuView extends JFrame implements ISudokuView {
 	    areaTexto.setText(sb.toString());
 	    JOptionPane.showMessageDialog(this, new JScrollPane(areaTexto), "Soluciones del Sudoku", JOptionPane.INFORMATION_MESSAGE);
 	}
-
 
 	@Override
 	public int getValorEnCelda(int fila, int columna) {

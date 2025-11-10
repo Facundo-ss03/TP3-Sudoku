@@ -5,14 +5,11 @@ import java.awt.*;
 
 public class CeldaView extends JTextField {
 	private boolean prefijada = false;
-	private Color doradoNegro = new Color(181, 148, 16);
-	private Color grisOscuro = new Color(20, 20, 20);
+	private static final Color DORADO_NEGRO = new Color(181, 148, 16);
+	private static final Color GRIS_OSCURO = new Color(20, 20, 20);
 	
 	public CeldaView() {
 		super();
-//		setHorizontalAlignment(JTextField.CENTER);
-//		setFont(new Font("Monospaced", Font.BOLD, 28));
-//		setBackground(Color.WHITE);
 		inicializarCelda();
 	}
 	
@@ -28,15 +25,10 @@ public class CeldaView extends JTextField {
 		} else {
 			setText(String.valueOf(valor));
 		}
-		
 		this.prefijada = esPrefijada;
 		setEditable(!esPrefijada);
-		// FONDO GRIS SI ES PREFIJADA
-		setBackground(esPrefijada ? grisOscuro : Color.WHITE);
-//		setBackground(esPrefijada ? new Color(20, 20, 20) : new Color(181, 148, 16));
-		// COLOR "BLACK GOLD"
-		setForeground(esPrefijada ? doradoNegro : doradoNegro);
-//		setForeground(esPrefijada ? new Color(181, 148, 16) : new Color(20, 20, 20));
+		setBackground(esPrefijada ? GRIS_OSCURO : Color.WHITE);
+		setForeground(esPrefijada ? DORADO_NEGRO : DORADO_NEGRO);
 	}
 	
 	public int getValor() {

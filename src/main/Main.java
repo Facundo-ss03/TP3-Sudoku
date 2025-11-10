@@ -11,7 +11,6 @@ public class Main {
         SudokuView view = new SudokuView();
         SudokuController controller = new SudokuController(model, view);
 
-
         // ACTUALIZAR LA VISTA CON EL SUDOKU CARGADO
         controller.actualizarViewDesdeModel();
 
@@ -19,7 +18,6 @@ public class Main {
         view.setVisible(true);
 
         // PARA GENERAR UNO ALEATORIO, DESCOMENTAR LO SIGUIENTE:
-        
          model.generarSudoku(17);
          controller.actualizarViewDesdeModel();
     }
