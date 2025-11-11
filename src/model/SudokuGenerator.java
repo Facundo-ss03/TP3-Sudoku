@@ -7,21 +7,21 @@ import interfaces.ISudokuGenerator;
 public class SudokuGenerator implements ISudokuGenerator {
 	private final SudokuValidator validador = new SudokuValidator();
 	private final Random random = new Random();
-	
+
 	@Override
 	public void generarSudoku(int[][] tablero, boolean[][] prefijadas, int cantidadPrefijados) {
 		limpiarTablero(tablero, prefijadas);
 		generarSudokuCompleto(tablero);
-		
+
 		// CREAMOS UNA VARIABLE PARA SABER LA CANTIDAD DE CELDAS QUE DEBEMOS REMOVER
 		int celdasARemover = 81 - cantidadPrefijados;
-		
+
 		// MIENTRAS QUE LA CANTIDAD DE CELDAS A REMOVER SEA MAYOR A 0:
 		while (celdasARemover > 0) {
 			// ELIGE UNA POSICION ALEATORIA
 			int fila = random.nextInt(9);
 			int columna = random.nextInt(9);
-			
+
 			// SI LA CELDA NO ESTÁ VACÍA, LA BORRA
 			if (tablero[fila][columna] != 0) {
 				tablero[fila][columna] = 0;
@@ -29,34 +29,44 @@ public class SudokuGenerator implements ISudokuGenerator {
 				celdasARemover--;
 			}
 		}
-		
+
 		// 50% QUE NO SE PUEDA RESOLVER
 		agregarChance(tablero, prefijadas, 0.5, cantidadPrefijados);
 	}
-	
+
 	private void agregarChance(int[][] tablero, boolean[][] prefijadas, double chance, int cantidadPrefijados) {
 		if (cantidadPrefijados > 0 && random.nextDouble() < chance) {
 			int fila = random.nextInt(9);
 			int columna1 = random.nextInt(9);
 			int columna2 = random.nextInt(9);
-					
+
 			if (columna1 != columna2) {
-				tablero[fila][columna1] = random.nextInt(9);
-				tablero[fila][columna2] = random.nextInt(9);
-				prefijadas[fila][columna1] = prefijadas[fila][columna2];
+				// GENREA DOS VALORES ALEATORIOS DEL 1 - 9
+				int nuevoValor1 = random.nextInt(9) + 1;
+				int nuevoValor2 = random.nextInt(9) + 1;
+
+				// SI LAS CELDAS SELECCIONADAS NO ESTAN VACIAS, LAS REEMPLAZA POR LOS VALORES DE ARRIBA
+				if (tablero[fila][columna1] != 0) {
+					tablero[fila][columna1]=nuevoValor1;
+				}
+				if (tablero[fila][columna2]!=0) {
+					tablero[fila][columna2] = nuevoValor2;
+				}
 			}
 		}
-				
 		// MARCA LAS CELDAS RESTANTES COMO PREFIJADAS
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				if (tablero[i][j] != 0) {
-					prefijadas[i][j] = true;
+		// SOLAMENTE SI EL USUARIO ELIGI AL MENOS UNA PREFIJADA
+		if (cantidadPrefijados > 0) {
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					if (tablero[i][j] != 0) {
+						prefijadas[i][j] = true;
+					}
 				}
 			}
 		}
 	}
-	
+
 	private boolean generarSudokuCompleto(int[][] tablero) {
 		// RECORRE TODAS LAS CELDAS
 		for (int fila = 0; fila < 9; fila++) {
@@ -84,7 +94,7 @@ public class SudokuGenerator implements ISudokuGenerator {
 		// SI NO QUEDAN CELDAS VACÍAS, EL TABLERO COMPLETO ESTÁ RESUELTO
 		return true;
 	}
-	
+
 	private int[] generarNumerosAleatorios() {
 		int[] numeros = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 		Random random = new Random();
@@ -98,7 +108,7 @@ public class SudokuGenerator implements ISudokuGenerator {
 		}
 		return numeros;
 	}
-	
+
 	private void limpiarTablero(int[][] tablero, boolean[][] prefijadas) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {

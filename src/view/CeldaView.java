@@ -17,6 +17,17 @@ public class CeldaView extends JTextField {
 		setHorizontalAlignment(JTextField.CENTER);
 		setFont(new Font("Monospaced", Font.BOLD, 28));
 		setBackground(Color.WHITE);
+		
+		addKeyListener(new java.awt.event.KeyAdapter() {
+	        @Override
+	        public void keyTyped(java.awt.event.KeyEvent e) {
+	            char c = e.getKeyChar();
+
+	            if (c < '1' || c > '9' || getText().length() >= 1) {
+	                e.consume(); 
+	            }
+	        }
+	    });
 	}
 	
 	public void setValor(int valor, boolean esPrefijada) {
