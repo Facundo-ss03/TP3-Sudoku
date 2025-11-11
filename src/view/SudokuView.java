@@ -33,8 +33,7 @@ public class SudokuView extends JFrame implements ISudokuView {
         
         // CAMPO DE TEXTO PARA LA CANTIDAD DE PREFIJADOS
         campoPrefijado = new JTextField("17", 3);
-        
-        // CONFIGURAR EL PANEL DE LOS BOTONES
+
         
         // CONFIGURAR ESTILO DE LOS BOTONES:
         configurarBotones(panelBotones);
