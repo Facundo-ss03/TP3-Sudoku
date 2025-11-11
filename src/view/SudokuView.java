@@ -60,15 +60,19 @@ public class SudokuView extends JFrame implements ISudokuView {
 			for (int columna = 0; columna < 9; columna++) {
 				CeldaView celda = new CeldaView();
 				
-				int arriba = (fila % 3 == 0 && fila != 0) ? 3 : 1;
-				int izquierda = (columna % 3 == 0 && columna != 0) ? 3 : 1;
-				celda.setBorder(BorderFactory.createMatteBorder(arriba, izquierda, 1, 1, Color.BLACK));
-				
-				celdas[fila][columna] = celda;
-				panel.add(celda);
+				panel.add(crearSubcuadriculasPanel(fila, columna, celda));
 			}
 		}
 		return panel;
+	}
+	
+	private CeldaView crearSubcuadriculasPanel(int fila, int columna, CeldaView celda) {
+		int arriba = (fila % 3 == 0 && fila != 0) ? 3 : 1;
+		int izquierda = (columna % 3 == 0 && columna != 0) ? 3 : 1;
+		celda.setBorder(BorderFactory.createMatteBorder(arriba, izquierda, 1, 1, Color.BLACK));
+		
+		celdas[fila][columna] = celda;
+		return celda;
 	}
 	
 	private void configurarBotones(JPanel panel) {
@@ -112,29 +116,43 @@ public class SudokuView extends JFrame implements ISudokuView {
 	
 	@Override
 	public void mostrarVentanaSoluciones(List<int[][]> soluciones) {
-	    JTextArea areaTexto = new JTextArea(20, 30);
-	    areaTexto.setFont(FUENTE_MONO);
-	    areaTexto.setEditable(false);
-
-	    StringBuilder sb = new StringBuilder();
-	    for (int k = 0; k < soluciones.size(); k++) {
-	        sb.append("Solución ").append(k + 1).append(":\n");
-	        int[][] tablero = soluciones.get(k);
-	        for (int i = 0; i < 9; i++) {
-	            for (int j = 0; j < 9; j++) {
-	                sb.append(tablero[i][j]).append(" ");
-	                if ((j+1)%3==0 && j<8) sb.append("| ");
-	            }
-	            sb.append("\n");
-	            if ((i+1)%3==0 && i<8) sb.append("------+-------+------\n");
-	        }
-	        sb.append("\n");
-	    }
-
-	    areaTexto.setText(sb.toString());
-	    JOptionPane.showMessageDialog(this, new JScrollPane(areaTexto), "Soluciones del Sudoku", JOptionPane.INFORMATION_MESSAGE);
+		String texto = construirTextoSoluciones(soluciones);
+		JTextArea area = crearAreaTexto(texto);
+		mostrarVentanaScroll(area);
 	}
-
+	
+	private String construirTextoSoluciones(List<int[][]> soluciones) {
+		StringBuilder sb = new StringBuilder();
+		for (int k = 0; k < soluciones.size(); k++) {
+			sb.append("Solución ").append(k + 1).append(":\n");
+			int[][] tablero = soluciones.get(k);
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					sb.append(tablero[i][j]).append(" ");
+					if ((j + 1) % 3 == 0 && j < 8) sb.append("| ");
+				}
+				sb.append("\n");
+				if ((i + 1) % 3 == 0 && i < 8) sb.append("------+-------+------\n");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	private JTextArea crearAreaTexto(String texto) {
+		JTextArea area = new JTextArea(20, 30);
+		area.setFont(FUENTE_MONO);
+		area.setEditable(false);
+		area.setText(texto);
+		
+		return area;
+	}
+	
+	private void mostrarVentanaScroll(JTextArea area) {
+		JScrollPane scroll = new JScrollPane(area);
+		JOptionPane.showMessageDialog(this, scroll, "Soluciones del Sudoku", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	@Override
 	public int getValorEnCelda(int fila, int columna) {
         return celdas[fila][columna].getValor();
