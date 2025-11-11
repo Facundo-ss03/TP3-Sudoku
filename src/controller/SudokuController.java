@@ -97,9 +97,9 @@ public class SudokuController implements ISudokuController {
 	@Override
 	public void actualizarModelDesdeView() {
         for (int fila = 0; fila < 9; fila++) {									// RECORRE TODAS LAS FILAS
-            for (int col = 0; col < 9; col++) {									// RECORRE TODAS LAS COLUMNAS
-                int valor = view.getValorEnCelda(fila, col);					// OBTIENE EL VALOR CONTENIDO EN CADA CELDA
-                model.setValor(valor, fila, col, model.esPrefijada(fila, col));	// ACTUALIZA EL MODEL CON ESE VALOR
+            for (int columna = 0; columna < 9; columna++) {									// RECORRE TODAS LAS COLUMNAS
+                int valor = view.getValorEnCelda(fila, columna);					// OBTIENE EL VALOR CONTENIDO EN CADA CELDA
+                model.setValor(valor, fila, columna, model.esPrefijada(fila, columna));	// ACTUALIZA EL MODEL CON ESE VALOR
             }
         }
     }
@@ -114,10 +114,10 @@ public class SudokuController implements ISudokuController {
 	@Override
 	public void actualizarViewDesdeModel() {
         for (int fila = 0; fila < 9; fila++) {									// RECORRE TODAS LAS FILAS
-            for (int col = 0; col < 9; col++) {									// RECORRE TODAS LAS COLUMNAS
-                int valor = model.getValor(fila, col);							// OBTIENE EL VALOR CONTENIDO EN CADA CELDA
-                boolean prefijada = model.esPrefijada(fila, col);				// VERIFICA SI ES UNA CELDA PREFIJADA
-                view.setValorEnCelda(valor, fila, col, prefijada);				// SETEA EL VALOR, DICIENDO SI ES PREFIJADA O NO
+            for (int columna = 0; columna < 9; columna++) {									// RECORRE TODAS LAS COLUMNAS
+                int valor = model.getValor(fila, columna);							// OBTIENE EL VALOR CONTENIDO EN CADA CELDA
+                boolean prefijada = model.esPrefijada(fila, columna);				// VERIFICA SI ES UNA CELDA PREFIJADA
+                view.setValorEnCelda(valor, fila, columna, prefijada);				// SETEA EL VALOR, DICIENDO SI ES PREFIJADA O NO
             }
         }
     }
